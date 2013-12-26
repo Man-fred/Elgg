@@ -483,16 +483,17 @@ function can_write_to_container($user_guid = 0, $container_guid = 0, $type = 'al
  *
  * @tip Use get_entity() to return the fully loaded entity.
  *
- * @warning This will only return results if a) it exists, b) you have access to it.
+ * @warning This will only return results if a) it exists, b) you have access to it or it comes from an login-action.
  * see {@link _elgg_get_access_where_sql()}.
  *
  * @param int $guid The GUID of the object to extract
+ * @param bool $from_login If coming from login or requestnewpassword, user must ever been seen, even if the access_id is set to 1
  *
  * @return stdClass|false
  * @see entity_row_to_elggstar()
  * @access private
  */
-function get_entity_as_row($guid) {
+function get_entity_as_row($guid, $from_login = FALSE) {
 	global $CONFIG;
 
 	if (!$guid) {
@@ -500,7 +501,7 @@ function get_entity_as_row($guid) {
 	}
 
 	$guid = (int) $guid;
-	$access = _elgg_get_access_where_sql(array('table_alias' => ''));
+	$access = _elgg_get_access_where_sql(array('table_alias' => '', 'from_login' => $from_login));
 
 	return get_data_row("SELECT * from {$CONFIG->dbprefix}entities where guid=$guid and $access");
 }
@@ -591,10 +592,11 @@ function entity_row_to_elggstar($row) {
  * Loads and returns an entity object from a guid.
  *
  * @param int $guid The GUID of the entity
+ * @param bool $from_login If coming from login or requestnewpassword, user must ever been seen, even if the access_id is set to 1
  *
  * @return ElggEntity The correct Elgg or custom object based upon entity type and subtype
  */
-function get_entity($guid) {
+function get_entity($guid, $from_login = FALSE) {
 	// This should not be a static local var. Notice that cache writing occurs in a completely
 	// different instance outside this function.
 	// @todo We need a single Memcache instance with a shared pool of namespace wrappers. This function would pull an instance from the pool.
@@ -623,7 +625,7 @@ function get_entity($guid) {
 	}
 
 	// until ACLs in memcache, DB query is required to determine access
-	$entity_row = get_entity_as_row($guid);
+	$entity_row = get_entity_as_row($guid, $from_login);
 	if (!$entity_row) {
 		return false;
 	}

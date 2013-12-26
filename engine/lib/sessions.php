@@ -167,7 +167,7 @@ function pam_auth_userpass(array $credentials = array()) {
 		return false;
 	}
 
-	$user = get_user_by_username($credentials['username']);
+	$user = get_user_by_username($credentials['username'], TRUE);
 	if (!$user) {
 		throw new LoginException(elgg_echo('LoginException:UsernameFailure'));
 	}
@@ -473,14 +473,14 @@ function _elgg_session_boot() {
 
 	// test whether we have a user session
 	if ($session->has('guid')) {
-		$session->setLoggedInUser(get_user($session->get('guid')));
+		$session->setLoggedInUser(get_user($session->get('guid'), TRUE));
 	} else {
 		// is there a remember me cookie
 		$cookies = elgg_get_config('cookies');
 		$cookie_name = $cookies['remember_me']['name'];
 		if (isset($_COOKIE[$cookie_name])) {
 			// we have a cookie, so try to log the user in
-			$user = get_user_by_code(md5($_COOKIE[$cookie_name]));
+			$user = get_user_by_code(md5($_COOKIE[$cookie_name]), TRUE);
 			if ($user) {
 				$session->setLoggedInUser($user);
 				$session->set('code', md5($_COOKIE[$cookie_name]));

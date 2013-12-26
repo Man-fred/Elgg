@@ -192,3 +192,12 @@ $CONFIG->db_disable_query_cache = false;
  * @global int $CONFIG->min_password_length
  */
 $CONFIG->min_password_length = 6;
+
+/**
+ * Accesslevel for new users
+ *
+ * This value is used when register a new user.
+ *
+ * @global int $CONFIG->user_access_id (ACCESS_PUBLIC or ACCESS_LOGGED_IN)
+ */
+$CONFIG->user_access_id = ACCESS_PUBLIC;

@@ -32,7 +32,7 @@ if (empty($username) || empty($password)) {
 }
 
 // check if logging in with email address
-if (strpos($username, '@') !== false && ($users = get_user_by_email($username))) {
+if (strpos($username, '@') !== false && ($users = get_user_by_email($username, TRUE))) {
 	$username = $users[0]->username;
 }
 
@@ -42,7 +42,7 @@ if ($result !== true) {
 	forward(REFERER);
 }
 
-$user = get_user_by_username($username);
+$user = get_user_by_username($username, TRUE);
 if (!$user) {
 	register_error(elgg_echo('login:baduser'));
 	forward(REFERER);

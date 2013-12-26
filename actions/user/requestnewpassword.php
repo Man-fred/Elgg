@@ -9,11 +9,11 @@
 $username = get_input('username');
 
 // allow email addresses
-if (strpos($username, '@') !== false && ($users = get_user_by_email($username))) {
+if (strpos($username, '@') !== false && ($users = get_user_by_email($username, TRUE))) {
 	$username = $users[0]->username;
 }
 
-$user = get_user_by_username($username);
+$user = get_user_by_username($username, TRUE);
 if ($user) {
 	if (send_new_password_request($user->guid)) {
 		system_message(elgg_echo('user:password:resetreq:success'));

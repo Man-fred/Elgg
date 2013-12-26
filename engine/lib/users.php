@@ -216,13 +216,14 @@ function remove_user_admin($user_guid) {
  * This function returns an ElggUser from a given GUID.
  *
  * @param int $guid The GUID
+ * @param bool $from_login If coming from login or requestnewpassword, user must ever been seen, even if the access_id is set to 1
  *
  * @return ElggUser|false
  */
-function get_user($guid) {
+function get_user($guid, $from_login = FALSE) {
 	// Fixes "Exception thrown without stack frame" when db_select fails
 	if (!empty($guid)) {
-		$result = get_entity($guid);
+		$result = get_entity($guid, $from_login);
 	}
 
 	if ((!empty($result)) && (!($result instanceof ElggUser))) {
@@ -240,10 +241,11 @@ function get_user($guid) {
  * Get user by username
  *
  * @param string $username The user's username
+ * @param bool $from_login If coming from login or requestnewpassword, user must ever been seen, even if the access_id is set to 1
  *
  * @return ElggUser|false Depending on success
  */
-function get_user_by_username($username) {
+function get_user_by_username($username, $from_login = FALSE) {
 	global $CONFIG, $USERNAME_TO_GUID_MAP_CACHE;
 
 	// Fixes #6052. Username is frequently sniffed from the path info, which,
@@ -252,7 +254,7 @@ function get_user_by_username($username) {
 	$username = rawurldecode($username);
 
 	$username = sanitise_string($username);
-	$access = _elgg_get_access_where_sql();
+	$access = _elgg_get_access_where_sql(array('from_login' => $from_login));
 
 	// Caching
 	if ((isset($USERNAME_TO_GUID_MAP_CACHE[$username]))
@@ -278,10 +280,11 @@ function get_user_by_username($username) {
  * Get user by remember me code
  *
  * @param string $code The remember me code
+ * @param bool $from_login If coming from login or requestnewpassword, user must ever been seen, even if the access_id is set to 1
  *
  * @return ElggUser
  */
-function get_user_by_code($code) {
+function get_user_by_code($code, $from_login = FALSE) {
 	if (!$code) {
 		return null;
 	}
@@ -314,15 +317,16 @@ function get_user_by_code($code) {
  * Get an array of users from an email address
  *
  * @param string $email Email address.
+ * @param bool $from_login If coming from login or requestnewpassword, user must ever been seen, even if the access_id is set to 1
  *
  * @return array
  */
-function get_user_by_email($email) {
+function get_user_by_email($email, $from_login = FALSE) {
 	global $CONFIG;
 
 	$email = sanitise_string($email);
 
-	$access = _elgg_get_access_where_sql();
+	$access = _elgg_get_access_where_sql(array('from_login' => $from_login));
 
 	$query = "SELECT e.* FROM {$CONFIG->dbprefix}entities e
 		JOIN {$CONFIG->dbprefix}users_entity u ON e.guid = u.guid
@@ -668,11 +672,11 @@ function register_user($username, $password, $name, $email, $allow_multiple_emai
 		throw new RegistrationException(elgg_echo('registration:usernamenotvalid'));
 	}
 
-	if ($user = get_user_by_username($username)) {
+	if ($user = get_user_by_username($username, TRUE)) {
 		throw new RegistrationException(elgg_echo('registration:userexists'));
 	}
 
-	if ((!$allow_multiple_emails) && (get_user_by_email($email))) {
+	if ((!$allow_multiple_emails) && (get_user_by_email($email, TRUE))) {
 		throw new RegistrationException(elgg_echo('registration:dupeemail'));
 	}
 
@@ -683,7 +687,11 @@ function register_user($username, $password, $name, $email, $allow_multiple_emai
 	$user->username = $username;
 	$user->email = $email;
 	$user->name = $name;
-	$user->access_id = ACCESS_PUBLIC;
+	if (isset($CONFIG->user_access_id)) {
+            $user->access_id = $CONFIG->user_access_id;
+        } else {
+            $user->access_id = ACCESS_LOGGED_IN;
+        }
 	$user->salt = generate_random_cleartext_password(); // Note salt generated before password!
 	$user->password = generate_user_password($user, $password);
 	$user->owner_guid = 0; // Users aren't owned by anyone, even if they are admin created.

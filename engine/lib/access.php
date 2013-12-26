@@ -337,6 +337,9 @@ function access_get_show_hidden_status() {
  * 
  *  guid_column => STR Optional guid_column. Default is 'guid'.
  * 
+ *  from_login => BOOL Optional. If coming from login or requestnewpassword, user must ever been seen,
+ *                     even if the access_id is not public. Default is 'FALSE'.
+ * 
  * @return string
  * @access private
  */
@@ -350,6 +353,7 @@ function _elgg_get_access_where_sql(array $options = array()) {
 		'access_column' => 'access_id',
 		'owner_guid_column' => 'owner_guid',
 		'guid_column' => 'guid',
+		'from_login' => FALSE,
 	);
 
 	$options = array_merge($defaults, $options);
@@ -365,7 +369,7 @@ function _elgg_get_access_where_sql(array $options = array()) {
 	// only add dot if we have an alias or table name
 	$table_alias = $options['table_alias'] ? $options['table_alias'] . '.' : '';
 
-	$options['ignore_access'] = elgg_check_access_overrides($options['user_guid']);
+	$options['ignore_access'] = $options['from_login'] || elgg_check_access_overrides($options['user_guid']);
 
 	$clauses = array(
 		'ors' => array(),
