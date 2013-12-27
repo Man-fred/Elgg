@@ -30,7 +30,7 @@ if (elgg_get_config('allow_registration')) {
 		$guid = register_user($username, $password, $name, $email);
 
 		if ($guid) {
-			$new_user = get_entity($guid);
+			$new_user = get_entity($guid, TRUE);
 
 			// allow plugins to respond to self registration
 			// note: To catch all new users, even those created by an admin,

@@ -642,7 +642,7 @@ function validate_email_address($address) {
  * @throws RegistrationException
  */
 function register_user($username, $password, $name, $email, $allow_multiple_emails = false) {
-
+global $CONFIG; 
 	// no need to trim password.
 	$username = trim($username);
 	$name = trim(strip_tags($name));
@@ -687,10 +687,10 @@ function register_user($username, $password, $name, $email, $allow_multiple_emai
 	$user->username = $username;
 	$user->email = $email;
 	$user->name = $name;
-	if (isset($CONFIG->user_access_id)) {
-            $user->access_id = $CONFIG->user_access_id;
+	if (isset($CONFIG->default_useraccess)) {
+            $user->access_id = (int) $CONFIG->default_useraccess;
         } else {
-            $user->access_id = ACCESS_LOGGED_IN;
+            $user->access_id = ACCESS_PUBLIC;
         }
 	$user->salt = generate_random_cleartext_password(); // Note salt generated before password!
 	$user->password = generate_user_password($user, $password);

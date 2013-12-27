@@ -53,7 +53,9 @@ if ($site = elgg_get_site_entity()) {
 
 	set_config('default_access', get_input('default_access', ACCESS_PRIVATE), $site->getGUID());
 
-	$user_default_access = ('on' === get_input('allow_user_default_access'));
+	set_config('default_useraccess', get_input('default_useraccess', ACCESS_PUBLIC), $site->getGUID());
+
+        $user_default_access = ('on' === get_input('allow_user_default_access'));
 	set_config('allow_user_default_access', $user_default_access, $site->getGUID());
 
 	$debug = get_input('debug');

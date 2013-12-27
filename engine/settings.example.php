@@ -196,8 +196,8 @@ $CONFIG->min_password_length = 6;
 /**
  * Accesslevel for new users
  *
- * This value is used when register a new user.
+ * This value is used when register a new user. Changeable in advanced settings
  *
- * @global int $CONFIG->user_access_id (ACCESS_PUBLIC or ACCESS_LOGGED_IN)
+ * @global int $CONFIG->default_useraccess (ACCESS_PUBLIC or ACCESS_LOGGED_IN)
  */
-$CONFIG->user_access_id = ACCESS_PUBLIC;
+$CONFIG->default_useraccess = 2; // ACCESS_PUBLIC;

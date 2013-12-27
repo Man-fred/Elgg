@@ -1028,6 +1028,7 @@ Once you have logged in, we highly recommend that you change your password.
 	'installation:dataroot' => "The full path of the data directory:",
 	'installation:dataroot:warning' => "You must create this directory manually. It should be in a different directory to your Elgg installation.",
 	'installation:sitepermissions' => "The default access permissions:",
+	'installation:userpermissions' => "The default access permissions for user:",
 	'installation:language' => "The default language for your site:",
 	'installation:debug' => "Control the amount of information written to the server's log.",
 	'installation:debug:label' => "Log level:",
@@ -1049,6 +1050,7 @@ Once you have logged in, we highly recommend that you change your password.
 
 	'installation:siteemail' => "Site email address (used when sending system emails):",
 
+	'admin:site:useraccess:warning' => "This is the privacy setting when creating a new user. Changing it does not change access to content.",
 	'admin:site:access:warning' => "This is the privacy setting suggested to users when they create new content. Changing it does not change access to content.",
 	'installation:allow_user_default_access:description' => "Enable this to allow users to set their own suggested privacy setting that overrides the system suggestion.",
 	'installation:allow_user_default_access:label' => "Allow user default access",

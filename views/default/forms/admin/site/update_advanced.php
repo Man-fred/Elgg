@@ -72,6 +72,20 @@ $form_body .= "</fieldset>";
 
 $form_body .= '<fieldset class="elgg-fieldset">';
 $form_body .= '<legend>' . elgg_echo('admin:legend:content_access') . '</legend>';
+
+$form_body .= "<div>" . elgg_echo('admin:site:useraccess:warning') . "<br />";
+$form_body .= "<label>" . elgg_echo('installation:userpermissions') . " </label>";
+$form_body .= elgg_view('input/access', array(
+	'options_values' => array(
+		ACCESS_PRIVATE => elgg_echo("PRIVATE"),
+		ACCESS_FRIENDS => elgg_echo("access:friends:label"),
+		ACCESS_LOGGED_IN => elgg_echo("LOGGED_IN"),
+		ACCESS_PUBLIC => elgg_echo("PUBLIC"),
+	),
+	'name' => 'default_useraccess',
+	'value' => elgg_get_config('default_useraccess'),
+)) . "</div>";
+
 $form_body .= "<div>" . elgg_echo('admin:site:access:warning') . "<br />";
 $form_body .= "<label>" . elgg_echo('installation:sitepermissions') . " </label>";
 $form_body .= elgg_view('input/access', array(

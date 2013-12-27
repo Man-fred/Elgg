@@ -146,8 +146,8 @@ function uservalidationbyemail_check_auth_attempt($credentials) {
 	$access_status = access_get_show_hidden_status();
 	access_show_hidden_entities(TRUE);
 
-	$user = get_user_by_username($username);
-	if ($user && isset($user->validated) && !$user->validated) {
+	$user = get_user_by_username($username, TRUE);
+	if ($user && elgg_get_user_validation_status($user->guid) == FALSE) {
 		// show an error and resend validation email
 		uservalidationbyemail_request_validation($user->guid);
 		access_show_hidden_entities($access_status);
