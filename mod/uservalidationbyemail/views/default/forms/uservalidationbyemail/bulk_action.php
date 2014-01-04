@@ -20,6 +20,7 @@ $options = array(
 	'limit' => $limit,
 	'offset' => $offset,
 	'count' => TRUE,
+	'from_login' => TRUE,
 );
 $count = elgg_get_entities($options);
 

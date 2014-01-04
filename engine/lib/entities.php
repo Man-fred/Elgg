@@ -798,7 +798,7 @@ function elgg_get_entities(array $options = array()) {
 		'joins'					=>	array(),
 
 		'callback'				=> 'entity_row_to_elggstar',
-
+		'from_login'				=> FALSE,
 		'__ElggBatch'			=> null,
 	);
 
@@ -894,7 +894,7 @@ function elgg_get_entities(array $options = array()) {
 	}
 
 	// Add access controls
-	$query .= _elgg_get_access_where_sql();
+	$query .= _elgg_get_access_where_sql(array('from_login' => $options['from_login']));
 
 	// reverse order by
 	if ($options['reverse_order_by']) {
