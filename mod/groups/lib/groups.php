@@ -49,7 +49,7 @@ function groups_handle_all_page() {
 	}
 
 	$filter = elgg_view('groups/group_sort_menu', array('selected' => $selected_tab));
-	
+
 	$sidebar = elgg_view('groups/sidebar/find');
 	$sidebar .= elgg_view('groups/sidebar/featured');
 
@@ -67,7 +67,8 @@ function groups_search_page() {
 	elgg_push_breadcrumb(elgg_echo('search'));
 
 	$tag = get_input("tag");
-	$title = elgg_echo('groups:search:title', array($tag));
+	$display_query = _elgg_get_display_query($tag);
+	$title = elgg_echo('groups:search:title', array($display_query));
 
 	// groups plugin saves tags as "interests" - see groups_fields_setup() in start.php
 	$params = array(
@@ -107,7 +108,9 @@ function groups_handle_owned_page() {
 	}
 	elgg_push_breadcrumb($title);
 
-	elgg_register_title_button();
+	if (elgg_get_plugin_setting('limited_groups', 'groups') != 'yes' || elgg_is_admin_logged_in()) {
+		elgg_register_title_button();
+	}
 
 	$dbprefix = elgg_get_config('dbprefix');
 	$content = elgg_list_entities(array(
@@ -143,7 +146,9 @@ function groups_handle_mine_page() {
 	}
 	elgg_push_breadcrumb($title);
 
-	elgg_register_title_button();
+	if (elgg_get_plugin_setting('limited_groups', 'groups') != 'yes' || elgg_is_admin_logged_in()) {
+		elgg_register_title_button();
+	}
 	
 	$dbprefix = elgg_get_config('dbprefix');
 
@@ -176,7 +181,7 @@ function groups_handle_mine_page() {
  */
 function groups_handle_edit_page($page, $guid = 0) {
 	elgg_gatekeeper();
-	
+
 	if ($page == 'add') {
 		elgg_set_page_owner_guid(elgg_get_logged_in_user_guid());
 		$title = elgg_echo('groups:add');
@@ -199,7 +204,7 @@ function groups_handle_edit_page($page, $guid = 0) {
 			$content = elgg_echo('groups:noaccess');
 		}
 	}
-	
+
 	$params = array(
 		'content' => $content,
 		'title' => $title,
@@ -272,14 +277,14 @@ function groups_handle_profile_page($guid) {
 			foreach ($NOTIFICATION_HANDLERS as $method => $foo) {
 				$relationship = check_entity_relationship(elgg_get_logged_in_user_guid(),
 						'notify' . $method, $guid);
-				
+
 				if ($relationship) {
 					$subscribed = true;
 					break;
 				}
 			}
 		}
-		
+
 		$sidebar .= elgg_view('groups/sidebar/my_status', array(
 			'entity' => $group,
 			'subscribed' => $subscribed
@@ -420,7 +425,7 @@ function groups_handle_invite_page($guid) {
 
 /**
  * Manage requests to join a group
- * 
+ *
  * @param int $guid Group entity GUID
  */
 function groups_handle_requests_page($guid) {
